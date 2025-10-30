@@ -1,0 +1,8 @@
+FROM eclipse-temurin:17-jdk-alpine
+
+RUN apk add --no-cache python3 nodejs npm build-base bash
+
+RUN mkdir -p /workspace
+WORKDIR /workspace
+
+CMD ["/bin/sh"]
