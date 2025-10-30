@@ -3,6 +3,20 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
+function normalizeContestIdentifier(input: string): string {
+  const trimmed = input.trim();
+  if (!trimmed) {
+    return trimmed;
+  }
+
+  const normalizedSpacing = trimmed.toLowerCase().replace(/\s+/g, " ");
+  if (normalizedSpacing === "sodh ai contest") {
+    return "sodh-ai-contest";
+  }
+
+  return trimmed;
+}
+
 export default function JoinPage() {
   const router = useRouter();
   const [contestId, setContestId] = useState("");
@@ -17,7 +31,8 @@ export default function JoinPage() {
     }
 
     setError(null);
-    const target = `/contest/${encodeURIComponent(contestId.trim())}?username=${encodeURIComponent(username.trim())}`;
+    const normalizedContestId = normalizeContestIdentifier(contestId);
+    const target = `/contest/${encodeURIComponent(normalizedContestId)}?username=${encodeURIComponent(username.trim())}`;
     // @ts-ignore
     router.push(target);
   };
