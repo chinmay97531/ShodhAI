@@ -28,7 +28,19 @@ const ACTIVE_STATUSES = new Set(["Pending", "Running", "Queued"]);
 export default function ContestPage() {
   const params = useParams<{ contestId: string }>();
   const searchParams = useSearchParams();
-  const contestId = params.contestId;
+  const rawContestId = params.contestId;
+  const contestId = useMemo(() => {
+    if (!rawContestId) {
+      return "";
+    }
+
+    try {
+      return decodeURIComponent(rawContestId);
+    } catch (error) {
+      console.warn("Failed to decode contest id", error);
+      return rawContestId;
+    }
+  }, [rawContestId]);
   const username = searchParams.get("username") ?? "Anonymous";
 
   const [contest, setContest] = useState<ContestDetails | null>(null);
@@ -59,10 +71,14 @@ export default function ContestPage() {
   );
 
   useEffect(() => {
+    if (!contestId) {
+      return;
+    }
+
     let active = true;
     setContestLoading(true);
     setContestError(null);
-    getContest(contestId)
+    getContest(contestId, { username })
       .then((data) => {
         if (!active) return;
         setContest(data);
@@ -79,13 +95,17 @@ export default function ContestPage() {
     return () => {
       active = false;
     };
-  }, [contestId]);
+  }, [contestId, username]);
 
   useEffect(() => {
+    if (!contestId) {
+      return;
+    }
+
     let active = true;
     setProblemsLoading(true);
     setProblemsError(null);
-    getProblems(contestId)
+    getProblems(contestId, { username })
       .then((data) => {
         if (!active) return;
         setProblems(data);
@@ -108,11 +128,15 @@ export default function ContestPage() {
     return () => {
       active = false;
     };
-  }, [contestId]);
+  }, [contestId, username]);
 
   const fetchLeaderboard = useCallback(async () => {
     try {
-      const data = await getLeaderboard(contestId);
+      if (!contestId) {
+        return;
+      }
+
+      const data = await getLeaderboard(contestId, { username });
       setLeaderboard(data);
       setLeaderboardError(null);
     } catch (error) {
@@ -121,12 +145,12 @@ export default function ContestPage() {
     } finally {
       setLeaderboardLoading(false);
     }
-  }, [contestId]);
+  }, [contestId, username]);
 
   useEffect(() => {
     setLeaderboardLoading(true);
     setLeaderboardError(null);
-  }, [contestId]);
+  }, [contestId, username]);
 
   usePolling(fetchLeaderboard, {
     interval: LIVE_POLLING_INTERVAL,
@@ -172,7 +196,7 @@ export default function ContestPage() {
     setIsSubmitting(true);
     try {
       const payload = {
-        contestId,
+        contestId: contest?.contestId ?? contestId ?? rawContestId,
         problemId: selectedProblem.id,
         username,
         language,
@@ -190,7 +214,8 @@ export default function ContestPage() {
     }
   };
 
-  const contestTitle = contest?.name ?? `Contest ${contestId}`;
+  const fallbackContestIdentifier = contest?.contestId ?? (contestId || rawContestId);
+  const contestTitle = contest?.name ?? `Contest ${fallbackContestIdentifier}`;
 
   return (
     <main className="flex flex-1 flex-col space-y-6">
