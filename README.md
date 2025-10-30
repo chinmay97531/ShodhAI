@@ -59,3 +59,24 @@ docker build -t shodhai/judge:latest -f Dockerfile.judge .
 
 You can then update the application configuration to invoke the containerized
 runtime instead of the local fallback.
+
+### Hosting with Docker Compose
+
+The repository ships with a `docker-compose.yaml` file that builds production
+containers for both the Spring Boot backend and the Next.js frontend. This is
+the quickest way to host the full stack locally or on a container platform that
+supports Docker Compose specs.
+
+1. Ensure Docker is installed and running.
+2. (Optional) Update `.env.local` or pass the `NEXT_PUBLIC_API_BASE_URL`
+   environment variable if your backend will be exposed on a different host.
+3. Build and start both services:
+
+   ```bash
+   docker compose up --build
+   ```
+
+The backend will be available on port `8080` and the frontend on port `3000`.
+When deployed to a Compose-compatible host, traffic to the frontend is routed
+through the service network to the backend using the internal hostname
+`backend:8080`.
