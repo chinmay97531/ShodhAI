@@ -4,6 +4,26 @@ type FetchOptions = RequestInit & {
   parseJson?: boolean;
 };
 
+type QueryValue = string | number | boolean | null | undefined;
+
+function buildQueryString(params: Record<string, QueryValue>): string {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") {
+      return;
+    }
+    searchParams.append(key, String(value));
+  });
+
+  const queryString = searchParams.toString();
+  return queryString ? `?${queryString}` : "";
+}
+
+function withQuery(path: string, params: Record<string, QueryValue>): string {
+  return `${path}${buildQueryString(params)}`;
+}
+
 export async function fetchJson<T>(input: string, init: FetchOptions = {}): Promise<T> {
   const { parseJson = true, headers, ...rest } = init;
   const response = await fetch(`${API_BASE_URL}${input}`, {
@@ -57,16 +77,28 @@ export interface ContestDetails {
   description?: string;
 }
 
-export async function getProblems(contestId: string): Promise<Problem[]> {
-  return fetchJson<Problem[]>(`/api/contests/${contestId}/problems`);
+export async function getProblems(
+  contestId: string,
+  params: { username?: string } = {}
+): Promise<Problem[]> {
+  const path = withQuery(`/api/contests/${encodeURIComponent(contestId)}/problems`, params);
+  return fetchJson<Problem[]>(path);
 }
 
-export async function getContest(contestId: string): Promise<ContestDetails> {
-  return fetchJson<ContestDetails>(`/api/contests/${contestId}`);
+export async function getContest(
+  contestId: string,
+  params: { username?: string } = {}
+): Promise<ContestDetails> {
+  const path = withQuery(`/api/contests/${encodeURIComponent(contestId)}`, params);
+  return fetchJson<ContestDetails>(path);
 }
 
-export async function getLeaderboard(contestId: string): Promise<LeaderboardEntry[]> {
-  return fetchJson<LeaderboardEntry[]>(`/api/contests/${contestId}/leaderboard`);
+export async function getLeaderboard(
+  contestId: string,
+  params: { username?: string } = {}
+): Promise<LeaderboardEntry[]> {
+  const path = withQuery(`/api/contests/${encodeURIComponent(contestId)}/leaderboard`, params);
+  return fetchJson<LeaderboardEntry[]>(path);
 }
 
 export async function submitSolution(
@@ -79,5 +111,5 @@ export async function submitSolution(
 }
 
 export async function getSubmissionStatus(submissionId: string): Promise<SubmissionStatus> {
-  return fetchJson<SubmissionStatus>(`/api/submissions/${submissionId}`);
+  return fetchJson<SubmissionStatus>(`/api/submissions/${encodeURIComponent(submissionId)}`);
 }
