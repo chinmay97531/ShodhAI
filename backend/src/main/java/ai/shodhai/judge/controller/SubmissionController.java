@@ -34,7 +34,7 @@ public class SubmissionController {
     public ResponseEntity<SubmissionResponse> createSubmission(@RequestBody @Valid SubmissionRequest request) {
         Submission submission = submissionService.createSubmission(request);
         submissionQueue.enqueue(submission.getId());
-        return ResponseEntity.accepted(new SubmissionResponse(submission.getId().toString()));
+        return ResponseEntity.accepted().body(new SubmissionResponse(submission.getId().toString()));
     }
 
     @GetMapping("/{submissionId}")

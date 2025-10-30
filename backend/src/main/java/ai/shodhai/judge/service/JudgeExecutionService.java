@@ -213,7 +213,7 @@ public class JudgeExecutionService {
             return new ExecutionOutcome(false, verdict, timeSeconds, message, null);
         }
 
-        String output() {
+        public String output() {
             return output == null ? "" : output;
         }
     }
