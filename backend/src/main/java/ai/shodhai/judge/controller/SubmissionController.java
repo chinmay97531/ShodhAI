@@ -38,7 +38,7 @@ public class SubmissionController {
     }
 
     @GetMapping("/{submissionId}")
-    public ResponseEntity<SubmissionStatusResponse> getSubmission(@PathVariable String submissionId) {
+    public ResponseEntity<SubmissionStatusResponse> getSubmission(@PathVariable("submissionId") String submissionId) {
         Submission submission = submissionService.getSubmission(UUID.fromString(submissionId));
         return ResponseEntity.ok(new SubmissionStatusResponse(
                 normalizeStatus(submission.getStatus()),
