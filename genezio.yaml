@@ -1,0 +1,24 @@
+name: shodhai
+packageManager: npm
+region: us-east-1
+
+frontend:
+  type: nextjs
+  path: .
+  commands:
+    install: npm install
+    build: npm run build
+    start: npm run start
+  outputDirectory: .next
+  environment:
+    NEXT_PUBLIC_API_BASE_URL: https://{{ backend.url }}/api
+
+backend:
+  language: java
+  path: backend
+  commands:
+    install: mvn -B dependency:go-offline
+    build: mvn -B clean package -DskipTests
+    start: java -jar target/judge-service-0.0.1-SNAPSHOT.jar
+  outputDirectory: target
+  entryFile: target/judge-service-0.0.1-SNAPSHOT.jar
