@@ -18,6 +18,7 @@ export default function JoinPage() {
 
     setError(null);
     const target = `/contest/${encodeURIComponent(contestId.trim())}?username=${encodeURIComponent(username.trim())}`;
+    // @ts-ignore
     router.push(target);
   };
 
