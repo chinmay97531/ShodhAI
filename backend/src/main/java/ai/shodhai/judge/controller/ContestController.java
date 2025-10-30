@@ -26,17 +26,17 @@ public class ContestController {
     }
 
     @GetMapping("/{contestId}")
-    public ResponseEntity<ContestResponse> getContest(@PathVariable String contestId) {
+    public ResponseEntity<ContestResponse> getContest(@PathVariable("contestId") String contestId) {
         return ResponseEntity.ok(contestService.getContest(contestId));
     }
 
     @GetMapping("/{contestId}/problems")
-    public ResponseEntity<List<ProblemResponse>> getProblems(@PathVariable String contestId) {
+    public ResponseEntity<List<ProblemResponse>> getProblems(@PathVariable("contestId") String contestId) {
         return ResponseEntity.ok(contestService.getProblems(contestId));
     }
 
     @GetMapping("/{contestId}/leaderboard")
-    public ResponseEntity<List<LeaderboardEntryResponse>> getLeaderboard(@PathVariable String contestId) {
+    public ResponseEntity<List<LeaderboardEntryResponse>> getLeaderboard(@PathVariable("contestId") String contestId) {
         return ResponseEntity.ok(leaderboardService.getLeaderboard(contestId));
     }
 }
