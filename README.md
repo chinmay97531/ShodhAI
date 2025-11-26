@@ -1,6 +1,6 @@
 # ShodhAI
 
-ShodhAI is a full-stack programming contest prototype that combines a Spring Boot
+ShodhAI is full-stack programming contest prototype that combines a Spring Boot
 backend with a Next.js frontend. The backend exposes REST APIs for managing
 contests and powering a live code judge, while the frontend delivers an
 interactive contest experience with live polling for submissions and the
